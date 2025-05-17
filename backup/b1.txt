@@ -1,0 +1,661 @@
+/*
+import React, { useState, useEffect, useRef } from "react";
+import Editor from "@monaco-editor/react";
+import "./App.css";
+
+const languageMap = {
+  cpp: 54,
+  python: 71,
+  c: 50,
+  java: 62
+};
+
+const languagesResponse = await fetch("http://localhost:2358/languages");
+const languages = await languagesResponse.json();
+
+
+const defaultCodes = {
+  python: `print("Hello from Python!")`,
+  cpp: `#include <iostream>\nusing namespace std;\nint main() {\n  cout << "Hello from C++!";\n  return 0;\n}`,
+  c: `#include <stdio.h>\nint main() {\n  printf("Hello from C!\\n");\n  return 0;\n}`,
+  java: `public class Main {\n  public static void main(String[] args) {\n    System.out.println("Hello from Java!");\n  }\n}`
+};
+
+const fileExtensions = {
+  python: "py",
+  cpp: "cpp",
+  c: "c",
+  java: "java"
+};
+
+function App() {
+  const [language, setLanguage] = useState("python");
+  const [code, setCode] = useState(defaultCodes["python"]);
+  const [output, setOutput] = useState("");
+  const [isRunning, setIsRunning] = useState(false);
+  const [theme, setTheme] = useState("dark");
+
+  const editorRef = useRef(null);
+
+ const handleRun = async () => {
+  setIsRunning(true);
+  const language_id = languageMap[language]; // make sure languageMap is defined!
+
+  try {
+    const response = await fetch("http://localhost:2358/submissions?base64_encoded=false&wait=true", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        source_code: code,
+        language_id
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.stdout) {
+      setOutput(data.stdout);
+    } else if (data.stderr) {
+      setOutput(data.stderr);
+    } else if (data.compile_output) {
+      setOutput(data.compile_output);
+    } else {
+      setOutput("No output received.");
+    }
+  } catch (err) {
+    setOutput("Something went wrong: " + err.message);
+  }
+
+  setIsRunning(false);
+};
+
+
+
+     
+
+  const handleEditorMount = (editor) => {
+    editorRef.current = editor;
+  };
+
+  const handleUndo = () => {
+    editorRef.current?.trigger("keyboard", "undo", null);
+  };
+
+  const handleRedo = () => {
+    editorRef.current?.trigger("keyboard", "redo", null);
+  };
+
+  const handleReset = () => {
+    const originalCode = defaultCodes[language];
+    if (code !== originalCode) {
+      if (!window.confirm("Are you sure you want to reset the code? Unsaved changes will be lost.")) return;
+    }
+    setCode(originalCode);
+    editorRef.current?.setValue(originalCode);
+  };
+
+  const handleLanguageChange = (lang) => {
+    setLanguage(lang);
+    const newCode = defaultCodes[lang];
+    setCode(newCode);
+    editorRef.current?.setValue(newCode);
+  };
+
+  const downloadCode = () => {
+    const blob = new Blob([code], { type: "text/plain;charset=utf-8" });
+    const ext = fileExtensions[language] || "txt";
+    const fileName = `main.${ext}`;
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  };
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === "dark" ? "light" : "dark"));
+  };
+
+  return (
+    <div className={`container ${theme}`}>
+      <div className="header">
+        <h2>🧠 Online Code Compiler</h2>
+
+        <select value={language} onChange={(e) => handleLanguageChange(e.target.value)}>
+          <option value="python">Python</option>
+          <option value="c">C</option>
+          <option value="cpp">C++</option>
+          <option value="java">Java</option>
+        </select>
+
+        <button onClick={handleUndo}>Undo ↺</button>
+        <button onClick={handleRedo}>Redo ↻</button>
+        <button onClick={handleReset}>Reset 🔄</button>
+        <button onClick={downloadCode}>Save 💾</button>
+        <button onClick={handleRun} disabled={isRunning}>
+          {isRunning ? "Running..." : "Run ▶"}
+        </button>
+        <button onClick={toggleTheme}>
+          {theme === "dark" ? "☀ Light Mode" : "🌙 Dark Mode"}
+        </button>
+      </div>
+
+      <Editor
+        height="50vh"
+        theme={theme === "dark" ? "vs-dark" : "light"}
+        defaultLanguage={language}
+        value={code}
+        onMount={handleEditorMount}
+        onChange={(value) => setCode(value)}
+      />
+
+      <div className="output">
+        <h3>Output:</h3>
+        <pre>{output}</pre>
+      </div>
+    </div>
+  );
+}
+
+export default App;
+*/
+
+
+/* with differnt ui
+import React, { useState } from "react";
+import Editor from "@monaco-editor/react";
+import "./App.css";
+
+// Language mapping for Judge0 API
+const languageMap = {
+  "cpp": 54,
+  "c": 50,
+  "python": 71,
+  "java": 62,
+  "javascript": 63
+};
+
+function App() {
+  const [code, setCode] = useState("");
+  const [output, setOutput] = useState("");
+  const [userInput, setUserInput] = useState("");
+  const [language, setLanguage] = useState("cpp");
+  const [isRunning, setIsRunning] = useState(false);
+
+  const handleRun = async () => {
+    setIsRunning(true);
+    const language_id = languageMap[language];
+
+    try {
+      const response = await fetch("http://localhost:2358/submissions?base64_encoded=false&wait=true", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          source_code: code,
+          language_id,
+          stdin: userInput
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.stdout) {
+        setOutput(data.stdout);
+      } else if (data.stderr) {
+        setOutput(data.stderr);
+      } else if (data.compile_output) {
+        setOutput(data.compile_output);
+      } else {
+        setOutput("No output received.");
+      }
+    } catch (err) {
+      setOutput("Something went wrong: " + err.message);
+    }
+
+    setIsRunning(false);
+  };
+
+  return (
+    <div className="App">
+      <h1>Online Code Compiler</h1>
+
+      <div>
+        <label>Select Language: </label>
+        <select value={language} onChange={(e) => setLanguage(e.target.value)}>
+          <option value="cpp">C++</option>
+          <option value="c">C</option>
+          <option value="python">Python</option>
+          <option value="java">Java</option>
+          <option value="javascript">JavaScript</option>
+        </select>
+      </div>
+
+      <div style={{ marginTop: "1rem" }}>
+        <Editor
+          height="300px"
+          defaultLanguage="cpp"
+          language={language}
+          value={code}
+          onChange={(value) => setCode(value)}
+        />
+      </div>
+
+      <h3>Standard Input (stdin)</h3>
+      <textarea
+        value={userInput}
+        onChange={(e) => setUserInput(e.target.value)}
+        placeholder="Enter input for your program"
+        rows={4}
+        cols={80}
+      />
+
+      <div>
+        <button onClick={handleRun} disabled={isRunning}>
+          {isRunning ? "Running..." : "Run Code"}
+        </button>
+      </div>
+
+      <h3>Output</h3>
+      <pre>{output}</pre>
+    </div>
+  );
+}
+
+export default App;
+*/
+
+/*with vamsi ui
+import React, { useState, useEffect, useRef } from "react";
+import Editor from "@monaco-editor/react";
+import "./App.css";
+
+const languageMap = {
+  cpp: 54,
+  python: 71,
+  c: 50,
+  java: 62
+};
+
+// const languagesResponse = await fetch("http://localhost:2358/languages");
+// const languages = await languagesResponse.json();
+
+const defaultCodes = {
+  python: `print("Hello from Python!")`,
+  cpp: `#include <iostream>\nusing namespace std;\nint main() {\n  cout << "Hello from C++!";\n  return 0;\n}`,
+  c: `#include <stdio.h>\nint main() {\n  printf("Hello from C!\\n");\n  return 0;\n}`,
+  java: `public class Main {\n  public static void main(String[] args) {\n    System.out.println("Hello from Java!");\n  }\n}`
+};
+
+const fileExtensions = {
+  python: "py",
+  cpp: "cpp",
+  c: "c",
+  java: "java"
+};
+
+function App() {
+  const [language, setLanguage] = useState("python");
+  const [code, setCode] = useState(defaultCodes["python"]);
+  const [output, setOutput] = useState("");
+  const [userInput, setUserInput] = useState(""); // <-- Added
+  const [isRunning, setIsRunning] = useState(false);
+  const [theme, setTheme] = useState("dark");
+
+  const editorRef = useRef(null);
+
+  const handleRun = async () => {
+    setIsRunning(true);
+    const language_id = languageMap[language];
+
+    try {
+      const response = await fetch("http://localhost:2358/submissions?base64_encoded=false&wait=true", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          source_code: code,
+          language_id,
+          stdin: userInput // <-- Include stdin
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.stdout) {
+        setOutput(data.stdout);
+      } else if (data.stderr) {
+        setOutput(data.stderr);
+      } else if (data.compile_output) {
+        setOutput(data.compile_output);
+      } else {
+        setOutput("No output received.");
+      }
+    } catch (err) {
+      setOutput("Something went wrong: " + err.message);
+    }
+
+    setIsRunning(false);
+  };
+
+  const handleEditorMount = (editor) => {
+    editorRef.current = editor;
+  };
+
+  const handleUndo = () => {
+    editorRef.current?.trigger("keyboard", "undo", null);
+  };
+
+  const handleRedo = () => {
+    editorRef.current?.trigger("keyboard", "redo", null);
+  };
+
+  const handleReset = () => {
+    const originalCode = defaultCodes[language];
+    if (code !== originalCode) {
+      if (!window.confirm("Are you sure you want to reset the code? Unsaved changes will be lost.")) return;
+    }
+    setCode(originalCode);
+    editorRef.current?.setValue(originalCode);
+  };
+
+  const handleLanguageChange = (lang) => {
+    setLanguage(lang);
+    const newCode = defaultCodes[lang];
+    setCode(newCode);
+    editorRef.current?.setValue(newCode);
+  };
+useEffect(() => {
+  const fetchLanguages = async () => {
+    try {
+      const response = await fetch("http://localhost:2358/languages");
+      const data = await response.json();
+      console.log("Available languages:", data);
+    } catch (err) {
+      console.error("Failed to fetch languages:", err);
+    }
+  };
+
+  fetchLanguages();
+}, []);
+
+  const downloadCode = () => {
+    const blob = new Blob([code], { type: "text/plain;charset=utf-8" });
+    const ext = fileExtensions[language] || "txt";
+    const fileName = `main.${ext}`;
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  };
+
+  const toggleTheme = () => {
+    setTheme(prev => (prev === "dark" ? "light" : "dark"));
+  };
+
+  return (
+    <div className={`container ${theme}`}>
+      <div className="header">
+        <h2>🧠 Online Code Compiler</h2>
+
+        <select value={language} onChange={(e) => handleLanguageChange(e.target.value)}>
+          <option value="python">Python</option>
+          <option value="c">C</option>
+          <option value="cpp">C++</option>
+          <option value="java">Java</option>
+        </select>
+
+        <button onClick={handleUndo}>Undo ↺</button>
+        <button onClick={handleRedo}>Redo ↻</button>
+        <button onClick={handleReset}>Reset 🔄</button>
+        <button onClick={downloadCode}>Save 💾</button>
+        <button onClick={handleRun} disabled={isRunning}>
+          {isRunning ? "Running..." : "Run ▶"}
+        </button>
+        <button onClick={toggleTheme}>
+          {theme === "dark" ? "☀ Light Mode" : "🌙 Dark Mode"}
+        </button>
+      </div>
+
+      <Editor
+        height="50vh"
+        theme={theme === "dark" ? "vs-dark" : "light"}
+        defaultLanguage={language}
+        value={code}
+        onMount={handleEditorMount}
+        onChange={(value) => setCode(value)}
+      />
+
+      <div className="stdin">
+        <h3>Standard Input (stdin):</h3>
+        <textarea
+          value={userInput}
+          onChange={(e) => setUserInput(e.target.value)}
+          rows={4}
+          cols={80}
+          placeholder="Enter input for your program here"
+        />
+      </div>
+
+      <div className="output">
+        <h3>Output:</h3>
+        <pre>{output}</pre>
+      </div>
+    </div>
+  );
+}
+
+export default App;
+*/
+
+
+
+
+
+/*full working 
+import React, { useState, useEffect, useRef } from "react";
+import Editor from "@monaco-editor/react";
+import "./App.css";
+
+const languageMap = {
+  cpp: 54,
+  python: 71,
+  c: 50,
+  java: 62,
+};
+
+const defaultCodes = {
+  python: `print("Hello from Python!")`,
+  cpp: `#include <iostream>\nusing namespace std;\nint main() {\n  cout << "Hello from C++!";\n  return 0;\n}`,
+  c: `#include <stdio.h>\nint main() {\n  printf("Hello from C!\\n");\n  return 0;\n}`,
+  java: `public class Main {\n  public static void main(String[] args) {\n    System.out.println("Hello from Java!");\n  }\n}`,
+};
+
+const fileExtensions = {
+  python: "py",
+  cpp: "cpp",
+  c: "c",
+  java: "java",
+};
+
+function App() {
+  const [language, setLanguage] = useState("python");
+  const [code, setCode] = useState(defaultCodes["python"]);
+  const [output, setOutput] = useState("");
+  const [userInput, setUserInput] = useState("");
+  const [isRunning, setIsRunning] = useState(false);
+  const [theme, setTheme] = useState("dark");
+
+  const editorRef = useRef(null);
+
+  const handleRun = async () => {
+    setIsRunning(true);
+    const language_id = languageMap[language];
+
+    try {
+      const response = await fetch(
+        "http://localhost:2358/submissions?base64_encoded=false&wait=true",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            source_code: code,
+            language_id,
+            stdin: userInput,
+          }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (data.stdout) {
+        setOutput(data.stdout);
+      } else if (data.stderr) {
+        setOutput(data.stderr);
+      } else if (data.compile_output) {
+        setOutput(data.compile_output);
+      } else {
+        setOutput("No output received.");
+      }
+    } catch (err) {
+      setOutput("Something went wrong: " + err.message);
+    }
+
+    setIsRunning(false);
+  };
+
+  const handleEditorMount = (editor) => {
+    editorRef.current = editor;
+  };
+
+  const handleUndo = () => {
+    editorRef.current?.trigger("keyboard", "undo", null);
+  };
+
+  const handleRedo = () => {
+    editorRef.current?.trigger("keyboard", "redo", null);
+  };
+
+  const handleReset = () => {
+    const originalCode = defaultCodes[language];
+    if (code !== originalCode) {
+      if (
+        !window.confirm(
+          "Are you sure you want to reset the code? Unsaved changes will be lost."
+        )
+      )
+        return;
+    }
+    setCode(originalCode);
+    editorRef.current?.setValue(originalCode);
+  };
+
+  const handleLanguageChange = (lang) => {
+    const originalCode = defaultCodes[language];
+    if (code !== originalCode) {
+      if (
+        !window.confirm(
+          "Are you sure you want to switch the languages? Unsaved changes will be lost."
+        )
+      )
+        return; // Cancel language switch if user declines
+    }
+    setLanguage(lang);
+    const newCode = defaultCodes[lang];
+    setCode(newCode);
+    editorRef.current?.setValue(newCode);
+  };
+
+  useEffect(() => {
+    const fetchLanguages = async () => {
+      try {
+        const response = await fetch("http://localhost:2358/languages");
+        const data = await response.json();
+        console.log("Available languages:", data);
+      } catch (err) {
+        console.error("Failed to fetch languages:", err);
+      }
+    };
+
+    fetchLanguages();
+  }, []);
+
+  const downloadCode = () => {
+    const blob = new Blob([code], { type: "text/plain;charset=utf-8" });
+    const ext = fileExtensions[language] || "txt";
+    const fileName = `main.${ext}`;
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
+    link.click();
+    URL.revokeObjectURL(link.href);
+  };
+
+  const toggleTheme = () => {
+    setTheme((prev) => (prev === "dark" ? "light" : "dark"));
+  };
+
+  return (
+    <div className={`container ${theme}`}>
+      <div className="header">
+        <h2>🧠 Online Code Compiler</h2>
+
+        <select
+          value={language}
+          onChange={(e) => handleLanguageChange(e.target.value)}
+        >
+          <option value="python">Python</option>
+          <option value="c">C</option>
+          <option value="cpp">C++</option>
+          <option value="java">Java</option>
+        </select>
+
+        <button onClick={handleUndo}>Undo ↺</button>
+        <button onClick={handleRedo}>Redo ↻</button>
+        <button onClick={handleReset}>Reset 🔄</button>
+        <button onClick={downloadCode}>Save 💾</button>
+        <button onClick={handleRun} disabled={isRunning}>
+          {isRunning ? "Running..." : "Run ▶"}
+        </button>
+        <button onClick={toggleTheme}>
+          {theme === "dark" ? "☀ Light Mode" : "🌙 Dark Mode"}
+        </button>
+      </div>
+
+      <Editor
+        height="50vh"
+        theme={theme === "dark" ? "vs-dark" : "light"}
+        defaultLanguage={language}
+        value={code}
+        onMount={handleEditorMount}
+        onChange={(value) => setCode(value)}
+      />
+      
+      <div className="stdin">
+        <h3>Standard Input (stdin):</h3>
+        <textarea
+          value={userInput}
+          onChange={(e) => setUserInput(e.target.value)}
+          rows={4}
+          cols={80}
+          placeholder="Enter input for your program here"
+        />
+      </div>
+
+      <div className="output">
+        <h3>Output:</h3>
+        <pre>{output}</pre>
+      </div>
+    </div>
+  );
+}
+
+export default App;
+*/

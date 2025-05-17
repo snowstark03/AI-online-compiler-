@@ -1,0 +1,187 @@
+
+.container {
+  font-family: "Segoe UI", sans-serif;
+  padding: 20px;
+  background-color: #1e1e1e;
+  color: white;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.header h2 {
+  flex-grow: 1;
+  margin: 0;
+}
+
+select, button {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  font-size: 14px;
+}
+.header button {
+  margin-left: 4px;
+}
+
+button {
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+}
+
+button:disabled {
+  background-color: #888;
+}
+
+.output {
+  background-color: #60d3c4;
+  padding: 10px;
+  margin-top: 10px;
+  height: 25vh;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  border-radius: 8px;
+
+  
+}
+
+.container.dark {
+  background-color: #1e1e1e;
+  color: white;
+}
+
+.container.light {
+  background-color: #f5f5f5;
+  color: black;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  padding: 10px;
+}
+
+.output {
+  padding: 10px;
+  font-size: 1rem;
+  
+}
+
+.stdin {
+  margin-top: 1rem;
+}
+.stdin textarea {
+  width: 100%;
+  font-family: monospace;
+}
+
+.ai-button {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  z-index: 10;
+  background-color: #0d6efd;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.ai-button:hover {
+  background-color: #0b5ed7;
+}
+
+/* Adjusted AI Panel Styles */
+.ai-panel {
+  position: absolute;
+  top: 0;
+  right: -360px; /* hidden by default */
+  width: 350px;
+  height: 75vh; /* same as editor height */
+  background-color: var(--panel-bg);
+  border-left: 1px solid #9de31a;
+  box-shadow: -2px 0 6px rgba(16, 213, 85, 0.2);
+  transition: right 0.3s ease;
+  z-index: 100;
+  padding: 16px;
+  border-radius: 8px 0 0 8px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.container.dark .ai-panel {
+  --panel-bg: #9a64e6;
+  color: #64e6bb;
+}
+
+.container.light .ai-panel {
+  --panel-bg: #ffffff;
+  color: #333;
+}
+
+.ai-panel.open {
+  right: 0;
+}
+
+.ai-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.ai-header h3 {
+  font-size: 16px;
+  margin: 0;
+}
+
+.ai-header button {
+  border: none;
+  background: transparent;
+  color: inherit;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.ai-content {
+  flex: 1;
+  white-space: pre-wrap;
+  font-size: 13px;
+  line-height: 1.4;
+  overflow-y: auto;
+}
+
+
+.ai-panel.open {
+  display: block;
+  right: 0;
+}
+
+.ai-panel {
+  position: fixed;
+  top: 60px;
+  right: -400px;
+  width: 400px;
+  height: calc(100vh - 60px);
+  background: #1e1e1e;
+  color: white;
+  overflow-y: auto;
+  transition: right 0.3s ease-in-out;
+  z-index: 10;
+  padding: 1rem;
+}
+
