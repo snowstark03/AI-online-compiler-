@@ -65,7 +65,7 @@ function App() {
 
         headers: {
           "Content-Type": "application/json",
-          "X-RapidAPI-Key": "013d59f45dmshab93e556c5ef23cp18b388jsn832c3d27fc68",
+          "X-RapidAPI-Key": "6d4b58492cmsh04b53d4f18e4102p1eb04ajsn5da0ec82659b",
           "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
         },
         body: JSON.stringify({
