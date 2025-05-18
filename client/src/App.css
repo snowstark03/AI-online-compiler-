@@ -4,10 +4,11 @@
   padding: 20px;
   background-color: #1e1e1e;
   color: white;
-  height: 100vh;
+  /* height: 100dvh; */
   display: flex;
   flex-direction: column;
   animation: fadeIn 0.5s ease-in;
+  overflow: hidden;
 }
 
 .container.dark {
@@ -73,15 +74,15 @@ button:focus,
 textarea:focus {
   outline: none;
   box-shadow: 0 0 0 2px #0d6efd66;
-  transition: box-shadow 0.2s ease;
 }
 
-/* Fade Animations */
+/* Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
     transform: translateY(15px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -93,6 +94,7 @@ textarea:focus {
     opacity: 0;
     transform: translateY(20px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -100,15 +102,41 @@ textarea:focus {
 }
 
 /* Output Area */
+
+.output-container {
+  display: flex;
+  flex: 1;
+}
+
+.output-container.single .child:first-child {
+  width: 100%;
+  height: fit-content;
+}
+
+.output-container.single .child:last-child {
+  width: 0;
+  padding: 0;
+  height: 0;
+}
+
+.output-container.split{
+  gap: 1rem;
+}
+
+.output-container.split .child {
+  width: 50%;
+}
+
 .output {
   padding: 10px;
-  margin-top: 10px;
-  height: 25vh;
-  overflow-y: auto;
   white-space: pre-wrap;
   border-radius: 8px;
   font-size: 1rem;
   animation: fadeInUp 0.5s ease-in-out;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 25vh;
 }
 
 .container.dark .output {
@@ -123,13 +151,12 @@ textarea:focus {
 
 /* Standard Input */
 .stdin {
-  margin-top: 1rem;
+  margin: 1rem 0;
 }
 
 .stdin textarea {
   width: 100%;
   font-family: monospace;
-  
   border: none;
   border-radius: 12px;
   resize: vertical;
@@ -147,11 +174,9 @@ textarea:focus {
   color: #1e1e1e;
 }
 
-/* AI Button */
-.ai-button {
-  position: absolute;
-  bottom: 12px;
-  left: 12px;
+/* AI Toggle Buttons */
+.ai-button,
+.ai-fix-button {
   z-index: 10;
   background-color: #0d6efd;
   color: white;
@@ -163,25 +188,44 @@ textarea:focus {
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-.ai-button:hover {
+.ai-button:hover,
+.ai-fix-button:hover {
   background-color: #0b5ed7;
   transform: scale(1.05);
 }
 
-.ai-button:active {
+.ai-button:active,
+.ai-fix-button:active {
   transform: scale(0.95);
 }
 
-/* AI Panel */
-.ai-panel {
+.ai-button {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+}
+
+.ai-fix-button{
+  bottom: 1rem;
+  width: fit-content;
+}
+
+/* Shared Panel Styles */
+
+.ai-panel-container {
+  display: flex;
+  gap: 1rem;
   position: absolute;
   top: 80px;
-  right: 20px;
-  width: 300px;
-  height: 400px;
+  right: 0;
+  flex-direction: row-reverse;
+}
+
+.ai-panel,
+.ai-fix-panel {
   background: #1e1e1e;
   color: white;
-  overflow-y: auto;
+  /* overflow-y: auto; */
   z-index: 100;
   padding: 1rem;
   border-radius: 12px;
@@ -192,12 +236,24 @@ textarea:focus {
   transition: all 0.3s ease-in-out;
 }
 
-.ai-panel.open {
+.ai-panel.open,
+.ai-fix-panel.open {
   opacity: 1;
   transform: translateY(0) scale(1);
   pointer-events: auto;
 }
 
+/* Panel Positioning */
+.ai-panel {
+  right: 20px;
+}
+
+.ai-panel-explain {
+  height: 400px;
+  width: 400px;
+}
+
+/* Panel Headers */
 .ai-header {
   display: flex;
   justify-content: space-between;
@@ -223,10 +279,8 @@ textarea:focus {
   transform: rotate(90deg);
 }
 
+/* Panel Content */
 .ai-content {
-  flex: 1;
-  white-space: pre-wrap;
   font-size: 13px;
-  line-height: 1.4;
-  overflow-y: auto;
+  text-wrap: wrap;
 }

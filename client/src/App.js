@@ -38,15 +38,15 @@ function App() {
   const [aiErrorResponse, setAiErrorResponse] = useState("");
 
   const [errorSuggestion, setErrorSuggestion] = useState("");
-const [errorPanelOpen, setErrorPanelOpen] = useState(false);
+  const [errorPanelOpen, setErrorPanelOpen] = useState(false);
 
 
   const isErrorOutput = (text) => {
-  if (!text) return false;
-  const errorKeywords = ["error", "exception", "traceback", "compile_error", "stderr"];
-  const lowerText = text.toLowerCase();
-  return errorKeywords.some(keyword => lowerText.includes(keyword));
-};
+    if (!text) return false;
+    const errorKeywords = ["error", "exception", "traceback", "compile_error", "stderr"];
+    const lowerText = text.toLowerCase();
+    return errorKeywords.some(keyword => lowerText.includes(keyword));
+  };
 
 
 
@@ -58,15 +58,15 @@ const [errorPanelOpen, setErrorPanelOpen] = useState(false);
 
     try {
       //const response = await fetch("http://localhost:2358/submissions?base64_encoded=false&wait=true", {
-
+      
       const response = await fetch("https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true", {
         method: "POST",
-        
 
-         headers: {
+
+        headers: {
           "Content-Type": "application/json",
-          "X-RapidAPI-Key": "f5b848e050msh06ca038799497cbp1100d4jsnbbbb60d6fcb2",
-              "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
+          "X-RapidAPI-Key": "013d59f45dmshab93e556c5ef23cp18b388jsn832c3d27fc68",
+          "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
         },
         body: JSON.stringify({
           source_code: code,
@@ -130,52 +130,52 @@ const [errorPanelOpen, setErrorPanelOpen] = useState(false);
   };
 
   const handleAiExplain = async () => {
-  setAiPanelOpen(true);
-  setAiResponse("Thinking...");
+    setAiPanelOpen(true);
+    setAiResponse("Thinking...");
 
-  try {
-    //const response = await fetch("http://localhost:4000/explain", {
-    const response = await fetch("https://ai-online-compiler-backend.onrender.com/explain", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ code, language }),
-    });
+    try {
+      //const response = await fetch("http://localhost:4000/explain", {
+      const response = await fetch("https://ai-online-compiler-backend.onrender.com/explain", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ code, language }),
+      });
 
-    const data = await response.json();
-    setAiResponse(data.explanation || "No explanation received.");
-  } catch (err) {
-    setAiResponse("AI explanation failed: " + err.message);
-  }
-  
-};
+      const data = await response.json();
+      setAiResponse(data.explanation || "No explanation received.");
+    } catch (err) {
+      setAiResponse("AI explanation failed: " + err.message);
+    }
 
-const handleErrorFix = async () => {
-  setErrorPanelOpen(true);
-  setErrorSuggestion("Thinking...");
+  };
 
-  try {
+  const handleErrorFix = async () => {
+    setErrorPanelOpen(true);
+    setErrorSuggestion("Thinking...");
 
-    //const response = await fetch("http://localhost:4000/fix-error", {
-    const response = await fetch("https://ai-online-compiler-backend.onrender.com/fix-error", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify({
-        code,
-        language,
-        error: output
-      })
-    });
+    try {
 
-    const data = await response.json();
-    setErrorSuggestion(data.suggestion || "No suggestion received.");
-  } catch (err) {
-    setErrorSuggestion("Error analyzing the issue: " + err.message);
-  }
-};
+      //const response = await fetch("http://localhost:4000/fix-error", {
+      const response = await fetch("https://ai-online-compiler-backend.onrender.com/fix-error", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          code,
+          language,
+          error: output
+        })
+      });
+
+      const data = await response.json();
+      setErrorSuggestion(data.suggestion || "No suggestion received.");
+    } catch (err) {
+      setErrorSuggestion("Error analyzing the issue: " + err.message);
+    }
+  };
 
 
 
@@ -229,24 +229,38 @@ const handleErrorFix = async () => {
           value={userInput}
           onChange={(e) => setUserInput(e.target.value)}
           rows={4}
-          cols={80}
+          cols={50}
           placeholder="Enter input for your program here"
         />
       </div>
 
-      <div className="output">
-        <h3>Output:</h3>
-        <pre>{output}</pre>
+      <div className={`output-container ${errorPanelOpen ? "split" : "single"}`}>
+        <div className="output child">
+          <div>
+            <h3>Output:</h3>
+            <p style={{textWrap: "pretty"}}>
+              {output}
+            </p>
+          </div>
+          {isErrorOutput(output) && (
+            <button onClick={handleErrorFix} className="ai-button ai-fix-button">
+              AI Fix 🔧
+            </button>
+          )}
+        </div>
 
-   {isErrorOutput(output) && (
-  <button onClick={handleErrorFix} className="ai-button" style={{ marginTop: "10px" }}>
-    AI Fix 🔧
-  </button>
-)}
+        <div className={`ai-panel ai-panel-fix ${errorPanelOpen ? "open" : ""} child`}>
+          <div className="ai-header">
+            <h3>AI Error Fix</h3>
+            <button onClick={() => setErrorPanelOpen(false)}>✖</button>
+          </div>
+          <div className="ai-content">
+            {errorSuggestion}
+          </div>
+        </div>
+      </div>
 
-</div>
-
-        {/* {aiErrorPanelOpen && (
+      {/* {aiErrorPanelOpen && (
   <div className="ai-error-panel">
     <div className="ai-header">
       <h3>AI Error Explanation</h3>
@@ -258,24 +272,15 @@ const handleErrorFix = async () => {
   </div>
 )} */}
 
-<div className={`ai-panel ${errorPanelOpen ? "open" : ""}`}>
-  <div className="ai-header">
-    <h3>AI Error Fix</h3>
-    <button onClick={() => setErrorPanelOpen(false)}>✖</button>
-  </div>
-  <div className="ai-content">
-    <pre>{errorSuggestion}</pre>
-  </div>
-</div>
-
-
-      <div className={`ai-panel ${aiPanelOpen ? "open" : ""}`}>
-        <div className="ai-header">
-          <h3>AI Code Explanation</h3>
-          <button onClick={() => setAiPanelOpen(false)}>✖</button>
-        </div>
-        <div className="ai-content">
-          <pre>{aiResponse}</pre>
+      <div className="ai-panel-container">
+        <div className={`ai-panel ai-panel-explain ${aiPanelOpen ? "open" : ""}`}>
+          <div className="ai-header">
+            <h3>AI Code Explanation</h3>
+            <button onClick={() => setAiPanelOpen(false)}>✖</button>
+          </div>
+          <div className="ai-content">
+            <text>{aiResponse}</text>
+          </div>
         </div>
       </div>
     </div>
@@ -283,4 +288,3 @@ const handleErrorFix = async () => {
 }
 
 export default App;
-  
