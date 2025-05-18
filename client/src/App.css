@@ -1,4 +1,4 @@
-
+/* Container Theme Base */
 .container {
   font-family: "Segoe UI", sans-serif;
   padding: 20px;
@@ -7,50 +7,7 @@
   height: 100vh;
   display: flex;
   flex-direction: column;
-}
-
-.header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-}
-
-.header h2 {
-  flex-grow: 1;
-  margin: 0;
-}
-
-select, button {
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: none;
-  font-size: 14px;
-}
-.header button {
-  margin-left: 4px;
-}
-
-button {
-  background-color: #4caf50;
-  color: white;
-  cursor: pointer;
-}
-
-button:disabled {
-  background-color: #888;
-}
-
-.output {
-  background-color: #60d3c4;
-  padding: 10px;
-  margin-top: 10px;
-  height: 25vh;
-  overflow-y: auto;
-  white-space: pre-wrap;
-  border-radius: 8px;
-
-  
+  animation: fadeIn 0.5s ease-in;
 }
 
 .container.dark {
@@ -63,28 +20,134 @@ button:disabled {
   color: black;
 }
 
+/* Header and Buttons */
 .header {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
   align-items: center;
+  gap: 10px;
   padding: 10px;
+  margin-bottom: 10px;
 }
 
+.header h2 {
+  flex-grow: 1;
+  margin: 0;
+}
+
+select,
+button {
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: none;
+  font-size: 14px;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.header button {
+  margin-left: 4px;
+}
+
+button {
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+}
+
+button:hover {
+  background-color: #45a049;
+  transform: scale(1.05);
+}
+
+button:active {
+  transform: scale(0.98);
+}
+
+button:disabled {
+  background-color: #888;
+  cursor: not-allowed;
+}
+
+select:focus,
+button:focus,
+textarea:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #0d6efd66;
+  transition: box-shadow 0.2s ease;
+}
+
+/* Fade Animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Output Area */
 .output {
   padding: 10px;
+  margin-top: 10px;
+  height: 25vh;
+  overflow-y: auto;
+  white-space: pre-wrap;
+  border-radius: 8px;
   font-size: 1rem;
-  
+  animation: fadeInUp 0.5s ease-in-out;
 }
 
+.container.dark .output {
+  background-color: #1e2a38;
+  color: #cfefff;
+}
+
+.container.light .output {
+  background-color: #ffffff;
+  color: #1e1e1e;
+}
+
+/* Standard Input */
 .stdin {
   margin-top: 1rem;
 }
+
 .stdin textarea {
   width: 100%;
   font-family: monospace;
+  
+  border: none;
+  border-radius: 12px;
+  resize: vertical;
+  min-height: 50px;
+  transition: box-shadow 0.2s ease, background-color 0.3s ease;
 }
 
+.container.dark .stdin textarea {
+  background-color: #2a2a2a;
+  color: #e6f1ff;
+}
+
+.container.light .stdin textarea {
+  background-color: #ffffff;
+  color: #1e1e1e;
+}
+
+/* AI Button */
 .ai-button {
   position: absolute;
   bottom: 12px;
@@ -97,44 +160,42 @@ button:disabled {
   padding: 6px 12px;
   font-size: 14px;
   cursor: pointer;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .ai-button:hover {
   background-color: #0b5ed7;
+  transform: scale(1.05);
 }
 
-/* Adjusted AI Panel Styles */
+.ai-button:active {
+  transform: scale(0.95);
+}
+
+/* AI Panel */
 .ai-panel {
   position: absolute;
-  top: 0;
-  right: -360px; /* hidden by default */
-  width: 350px;
-  height: 75vh; /* same as editor height */
-  background-color: var(--panel-bg);
-  border-left: 1px solid #9de31a;
-  box-shadow: -2px 0 6px rgba(16, 213, 85, 0.2);
-  transition: right 0.3s ease;
-  z-index: 100;
-  padding: 16px;
-  border-radius: 8px 0 0 8px;
-  display: flex;
-  flex-direction: column;
+  top: 80px;
+  right: 20px;
+  width: 300px;
+  height: 400px;
+  background: #1e1e1e;
+  color: white;
   overflow-y: auto;
-}
-
-.container.dark .ai-panel {
-  --panel-bg: #9a64e6;
-  color: #64e6bb;
-}
-
-.container.light .ai-panel {
-  --panel-bg: #ffffff;
-  color: #333;
+  z-index: 100;
+  padding: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  opacity: 0;
+  transform: translateY(20px) scale(0.95);
+  pointer-events: none;
+  transition: all 0.3s ease-in-out;
 }
 
 .ai-panel.open {
-  right: 0;
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
 }
 
 .ai-header {
@@ -155,6 +216,11 @@ button:disabled {
   color: inherit;
   font-size: 20px;
   cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.ai-header button:hover {
+  transform: rotate(90deg);
 }
 
 .ai-content {
@@ -164,24 +230,3 @@ button:disabled {
   line-height: 1.4;
   overflow-y: auto;
 }
-
-
-.ai-panel.open {
-  display: block;
-  right: 0;
-}
-
-.ai-panel {
-  position: fixed;
-  top: 60px;
-  right: -400px;
-  width: 400px;
-  height: calc(100vh - 60px);
-  background: #1e1e1e;
-  color: white;
-  overflow-y: auto;
-  transition: right 0.3s ease-in-out;
-  z-index: 10;
-  padding: 1rem;
-}
-

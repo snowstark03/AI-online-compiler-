@@ -156,6 +156,8 @@ const handleErrorFix = async () => {
   setErrorSuggestion("Thinking...");
 
   try {
+
+    //const response = await fetch("http://localhost:4000/fix-error", {
     const response = await fetch("https://ai-online-compiler-backend.onrender.com/fix-error", {
       method: "POST",
       headers: {
