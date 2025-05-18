@@ -57,9 +57,17 @@ const [errorPanelOpen, setErrorPanelOpen] = useState(false);
     const language_id = languageMap[language];
 
     try {
-      const response = await fetch("http://localhost:2358/submissions?base64_encoded=false&wait=true", {
+      //const response = await fetch("http://localhost:2358/submissions?base64_encoded=false&wait=true", {
+
+      const response = await fetch("https://judge0-ce.p.rapidapi.com/submissions?base64_encoded=false&wait=true", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        
+
+         headers: {
+          "Content-Type": "application/json",
+          "X-RapidAPI-Key": "f5b848e050msh06ca038799497cbp1100d4jsnbbbb60d6fcb2",
+              "X-RapidAPI-Host": "judge0-ce.p.rapidapi.com",
+        },
         body: JSON.stringify({
           source_code: code,
           language_id,
@@ -126,7 +134,8 @@ const [errorPanelOpen, setErrorPanelOpen] = useState(false);
   setAiResponse("Thinking...");
 
   try {
-    const response = await fetch("http://localhost:4000/explain", {
+    //const response = await fetch("http://localhost:4000/explain", {
+    const response = await fetch("https://ai-online-compiler-backend.onrender.com/explain", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -139,6 +148,7 @@ const [errorPanelOpen, setErrorPanelOpen] = useState(false);
   } catch (err) {
     setAiResponse("AI explanation failed: " + err.message);
   }
+  
 };
 
 const handleErrorFix = async () => {
@@ -146,7 +156,7 @@ const handleErrorFix = async () => {
   setErrorSuggestion("Thinking...");
 
   try {
-    const response = await fetch("http://localhost:4000/fix-error", {
+    const response = await fetch("https://ai-online-compiler-backend.onrender.com/fix-error", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"

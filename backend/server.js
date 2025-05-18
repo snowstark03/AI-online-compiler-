@@ -10,11 +10,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+
 const openai = new OpenAI({
   apiKey: process.env.OPENROUTER_API_KEY,
   baseURL: "https://openrouter.ai/api/v1",
+  
 });
 
+console.log("API KEY:", process.env.OPENROUTER_API_KEY); 
 app.post("/explain", async (req, res) => {
   const { code, language } = req.body;
 
